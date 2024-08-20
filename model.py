@@ -1,6 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
+from tensorflow.keras.layers import Layer, GRU, Dense, Concatenate, Activation
+from tensorflow.keras import initializers
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 glucose_hr = pd.read_csv("dataset")
 
@@ -28,16 +32,12 @@ def prepare_sequences(data, sequence_length):
     return X, y
 
 
-seq_length = 12 
+seq_length = 12 #1hour
 
 X_glu_hr_train, y_glu_hr_train = prepare_sequences(glu_hr_train, seq_length)
 X_glu_hr_test, y_glu_hr_test = prepare_sequences(glu_hr_test, seq_length)
 
-import tensorflow as tf
-from tensorflow.keras.layers import Layer, GRU, Dense, Concatenate, Activation
-from tensorflow.keras import initializers
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-
+#model
 class AttentionLayer(Layer):
     def __init__(self, units):
         super(AttentionLayer, self).__init__()
@@ -75,12 +75,10 @@ heart_rate_dim = 1  # Dimension of heart rate input
 glycemia_dim = 1  # Dimension of glycemia output
 
 
-#Build and compile the model
 model = GRUWithAttention(units, attention_units)
 model.compile(optimizer='adam', loss='mse')
 
-# Train the model
 model.fit(X_glu_hr_train, y_glu_hr_train, epochs=100, batch_size=32)
-# Evaluate the model
+
 loss = model.evaluate(X_glu_hr_train, y_glu_hr_train)
 print("Test Loss:", loss)
