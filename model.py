@@ -1,3 +1,7 @@
+# Data preparation
+import pandas as pd
+import numpy as np
+glucose_hr = pd.read_csv("dataset")
 
 
 import tensorflow as tf
