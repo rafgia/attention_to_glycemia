@@ -2,6 +2,8 @@
 
 This is the code used in the paper "Forecasting Glucose Values for Patients with Type 1 Diabetes Using Heart Rate Data." 
 
+The code attached allow the user to predict the blood glucose values at different prediction horizon, using as input both Blood Glucose and Heart Rate values. The algorithm proposed use a GRU layer with a Double Attention mechanism.
+
 How to use:
 Input: the code takes as input a CSV file containing measured heart rate (HR) and blood glucose (BG) levels of patients with type 1 diabetes (use the Example_dataset.csv);
 Run model.py in a python environment (for instance a Jupyter Notebook, Visual Studio Code, Google Colab...)
