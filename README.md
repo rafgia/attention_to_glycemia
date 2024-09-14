@@ -1,4 +1,4 @@
-# attention_to_glycemia
+# AttentionToGlycemia
 
 This is the code used in the paper "Forecasting Glucose Values for Patients with Type 1 Diabetes Using Heart Rate Data." The code takes as input a CSV file containing measured heart rate (HR) and blood glucose (BG) levels of patients with type 1 diabetes. It splits the data into overlapping time series windows of varying sizes, which are then used as input to a GRU (Gated Recurrent Unit) with an attention mechanism to forecast future blood glucose levels.
 
