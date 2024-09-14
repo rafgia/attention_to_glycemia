@@ -1,21 +1,41 @@
 # Data preparation
 import pandas as pd
 import numpy as np
-glucose_hr = pd.read_csv("dataset")
-
-
 import tensorflow as tf
 from tensorflow.keras.layers import Input, GRU, Dense, Concatenate, Activation, Lambda
 from tensorflow.keras.models import Model
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+
+glucose_hr = pd.read_csv("dataset")
+
+# Split train data (90%) and test data (10%)
+train_size = int(len(glucose_hr)*0.9)
+glu_hr_train = glucose_hr[:train_size]
+glu_hr_test = glucose_hr[train_size:]
+
+def prepare_sequences(data, sequence_length):
+    num_samples = len(data)
+    X, y = [], []
+    for i in range(num_samples - sequence_length + 1):
+        if i+sequence_length<len(data):
+            X.append(data[i:i+sequence_length, :])  # Extracting both heart rate and glycemia pairs
+            y.append(data[i+sequence_length, 0])  # Extracting the next glycemia value
+    X = np.array(X)
+    y = np.array(y).reshape(-1, 1)
+    return X, y
+
+seq_length = 12 #choose the length of the time window of measured values to be considered
+X_glu_hr_train, y_glu_hr_train = prepare_sequences(glu_hr_train, seq_length)
+X_glu_hr_test, y_glu_hr_test = prepare_sequences(glu_hr_test, seq_length)
 
 
 X_glu_train = X_glu_hr_train[:,:,0] #to take only the blood glucose values
 X_hr_train = X_glu_hr_train[:,:,1] #to take only the heart rate values
 
+#Model
 
-# Input shapes
-input_shape_glu = (12, 1)  # Blood glucose values
-input_shape_hr = (12, 1)   # Heart rate values
+input_shape_glu = (12, 1)  # # Input shape Blood glucose values
+input_shape_hr = (12, 1)   # # Input shape Heart rate values
 
 hidden_units = 64 # Number of hidden units for the GRU layers
 
@@ -46,8 +66,6 @@ model.compile(optimizer='adam', loss='mean_squared_error') # Compile the model
 model.fit({'glucose_input': X_glu_train, 'heart_rate_input': X_hr_train}, y_glu_hr_train, epochs=20, batch_size=32) # Train the model
 
 # Compute Mean Squared Error (MSE) and Mean Absolute Error (MAE)
-
-from sklearn.metrics import mean_squared_error, mean_absolute_error
 X_glu_test = X_glu_hr_test[:,:,0]
 X_hr_test = X_glu_hr_test[:,:,1]
 predictions = model.predict({'glucose_input': X_glu_test, 'heart_rate_input': X_hr_test})
