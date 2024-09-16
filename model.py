@@ -7,12 +7,17 @@ from tensorflow.keras.models import Model
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 glucose_hr = pd.read_csv("dataset")
-glucose_hr = df.iloc[:, [1, 2]].values #to take only Blood Glucose and Heart Rate values
+glucose_hr = glucose_hr.iloc[:, [1, 2]].values #to take only Blood Glucose and Heart Rate values
 
 # Split train data (90%) and test data (10%)
 train_size = int(len(glucose_hr)*0.9)
 glu_hr_train = glucose_hr[:train_size]
 glu_hr_test = glucose_hr[train_size:]
+
+glu_hr_train = glu_hr_train.astype(int)
+glu_hr_train = glu_hr_train.astype(float)
+glu_hr_test = glu_hr_test.astype(int)
+glu_hr_test  = glu_hr_test.astype(float)
 
 def prepare_sequences(data, sequence_length):
     num_samples = len(data)
